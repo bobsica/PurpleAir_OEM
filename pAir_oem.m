@@ -56,4 +56,7 @@ S_ainv = [];
 Seinv = [];
 [X,R] = oem(O,Q,R,@pAirmakeJ_physical,S_a,Se,S_ainv,Seinv,x_a,Y.Y);
 X.x
-X.e;
+
+% apply forward model to get corrected purpleair data
+exponent = Q.RH.*exp(-Q.b./(T_avgs*Q.Dp));
+pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*exponent./(1 - exponent));
