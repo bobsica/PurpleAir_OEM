@@ -9,3 +9,5 @@ The purpose of these codes is to clean and average raw data from a PurpleAir sen
 4. In a new Excel sheet, I copy+pasted the corresponding averaged PurpleAir data from Step 2, along with the ministry data from step 3 (taking daily averages of ministry data, if needed). Doesn't matter how this is formatted, as long as you somehow make it so the `pAir_oem.m` script can read the ministry PM2.5, purpleair PM2.5, relative humidity, and temperature for each time point (either each hour or each day).
 
 5. Run `pAir_oem.m` . Put in name of your Excel file from step 4, and adjust indices if needed so it can read the data it needs. It outputs the retrieved linear constant and bulk hygroscopicity, which can be easily applied to the calibration equation to correct the raw purpleair data (see last 2 lines of the code).
+
+**end**
