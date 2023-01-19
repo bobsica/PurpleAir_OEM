@@ -10,10 +10,11 @@
 % b is known constants
 
 % get data from excel file
-[i,t,r] = xlsread('Example\averaged_data.xlsx','Hourly_summer');
-min_avgs = i(664:1387,2);  % ministry PM2.5 data
-pm_avgs = i(664:1387,3);  % purpleair PM2.5 data
-rh_avgs = i(664:1387,4);  % purpleair RH data
+[i,t,r] = xlsread('./Example/averaged_data.xlsx','Hourly_summer');
+% 2nd index, RHS was 2, 3, 4, 6
+min_avgs = i(664:1387,3);  % ministry PM2.5 data
+pm_avgs = i(664:1387,4);  % purpleair PM2.5 data
+rh_avgs = i(664:1387,5);  % purpleair RH data
 T_avgs = i(664:1387,6);  % purpleair T data
 
 %set R, retrieval structure
@@ -31,6 +32,7 @@ Y.Y = min_avgs;
 % covariance matrix. ministry sensor has 5% accuracy, plus added 0.5 since
 % integer rounding
 Y.Yvar = (0.5 + 0.05*min_avgs).^2;
+%Y.Yvar = (1 + 0.05*min_avgs).^2;
 Se = diag(Y.Yvar);
 
 % Q, Forward model structure. This is the purpleair pm2.5 and RH data
@@ -41,15 +43,15 @@ Q.T = T_avgs;
 sigma = 0.072; % water surface tension N/m
 M = 0.018; % water molecular weight kg/mol
 rho = 1000; % water density kg/m3
-r = 8.314; % ideal gas constant J/mol K
-Q.b = 4*sigma*M/(rho*r);
+Rgas = 8.314; % ideal gas constant J/mol K
+Q.b = 4*sigma*M/(rho*Rgas);
 Q.Dp = 0.0000002; % particle diameter m
 
 n = 2; % retrieving i, k
 
 % set a priori coefficients
 x_a = [1.5;0.5];
-x_var = [0.5*x_a(1)^2,0.5*x_a(2)^2];
+x_var = [0.5*x_a(1)^2,0.5*x_a(2)^2]; %was 0.5
 S_a = diag(x_var);
 
 S_ainv = [];
