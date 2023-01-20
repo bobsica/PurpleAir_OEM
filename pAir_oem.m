@@ -31,8 +31,9 @@ O = defOreal;
 Y.Y = min_avgs;
 % covariance matrix. ministry sensor has 5% accuracy, plus added 0.5 since
 % integer rounding
-Y.Yvar = (0.5 + 0.05*min_avgs).^2;
-%Y.Yvar = (1 + 0.05*min_avgs).^2;
+%Y.Yvar = (0.5 + 0.05*min_avgs).^2;
+Y.Yvar = (0.29).^2 + (0.05*min_avgs).^2;
+
 Se = diag(Y.Yvar);
 
 % Q, Forward model structure. This is the purpleair pm2.5 and RH data
