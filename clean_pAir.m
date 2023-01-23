@@ -2,14 +2,15 @@
 % currently has a quality flag that keeps ~97% of the data for our sensor
 
 % inputs
-a_primary = 'Example\July_A.csv'; % Primary (A) file
-b_primary = 'Example\July_b.csv'; % Primary (B) file
+a_primary = 'Example/July_A.csv'; % Primary (A) file
+b_primary = 'Example/July_B.csv'; % Primary (B) file
 timezone = -4; % compared to UTC
 quality_percent = 0.25; % keep readings where channels agree within 25%
 quality_absolute = 4; % keep readings where channels agree within 4ug/m3
 option = 'hourly'; % 'daily' or 'hourly' averaging
 
 % read data
+Test = readtable('Example/July_A.csv','NumHeaderLines',1);
 [i_a,t_a,r_a] = xlsread(a_primary);
 [i_b,t_b,r_b] = xlsread(b_primary);
 r_a(1,:) = [];
