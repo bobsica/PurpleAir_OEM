@@ -1,4 +1,4 @@
-created_at,entry_id,PM1.0_CF1_ug/m3,PM2.5_CF1_ug/m3,PM10.0_CF1_ug/m3,UptimeMinutes,RSSI_dbm,Temperature_F,Humidity_%,PM2.5_ATM_ug/m3,
+time,id,PM1d0,PM2d5,PM10,UptimeMinutes,RSSI_dbm,Temperature_F,Humidity,PM2d5_ATM
 2021-07-01 04:00:50 UTC,88888,4.84,6.93,7.61,23918.00,-78.00,72.00,70.00,6.93
 2021-07-01 04:02:50 UTC,88889,5.51,8.47,9.05,23920.00,-78.00,72.00,70.00,8.47
 2021-07-01 04:04:50 UTC,88890,4.86,7.46,7.98,23922.00,-78.00,72.00,70.00,7.46
