@@ -2,31 +2,47 @@
 % currently has a quality flag that keeps ~97% of the data for our sensor
 
 % inputs
-a_primary = 'Example/July_A.csv'; % Primary (A) file
-b_primary = 'Example/July_B.csv'; % Primary (B) file
+a_primary = './Example/July_A.csv'; % Primary (A) file
+b_primary = './Example/July_B.csv'; % Primary (B) file
 timezone = -4; % compared to UTC
 quality_percent = 0.25; % keep readings where channels agree within 25%
 quality_absolute = 4; % keep readings where channels agree within 4ug/m3
 option = 'hourly'; % 'daily' or 'hourly' averaging
 
 % read data
-Test = readtable('Example/July_A.csv','NumHeaderLines',1);
-[i_a,t_a,r_a] = xlsread(a_primary);
-[i_b,t_b,r_b] = xlsread(b_primary);
-r_a(1,:) = [];
-[m,n] = size(r_a);
-for t=1:m
-    s = r_a{t,1};
-    r_a(t,1) = {s(1:end-4)};
-end
-r_b(1,:) = [];
-[m,n] = size(r_b);
-for t=1:m
-    s = r_b{t,1};
-    r_b(t,1) = {s(1:end-4)};
-end
-times_a = datetime(r_a(:,1), 'InputFormat', 'yyyy-MM-dd HH:mm:ss') + hours(timezone);
-times_b = datetime(r_b(:,1), 'InputFormat', 'yyyy-MM-dd HH:mm:ss') + hours(timezone);
+% r_a, r_b are times
+% t_a, t_b are unused
+% i_a, i_b 
+% pm_a = i_a(:,9);
+% rh = i_a(:,8);
+% T = i_a(:,7);
+% pm_b = i_b(:,9);
+
+%Test = readtable('./Example/July_A.csv','NumHeaderLines',1);
+%[i_a,t_a,r_a] = xlsread(a_primary);
+%[i_b,t_b,r_b] = xlsread(b_primary);
+
+% to read csv files
+tA = readtable(a_primary,'Delimiter',{' ' ','}, 'MultipleDelimsAsOne', false,'Format','auto'); % reads file
+times_a = tA.Var1 + tA.Var2; % you only see 2021-07-01
+tB = readtable(b_primary,'Delimiter',{' ' ','}, 'MultipleDelimsAsOne', false,'Format','auto'); % reads file
+times_b = tB.Var1 + tB.Var2; % you only see 2021-07-01
+
+% Jill time code block
+% r_a(1,:) = [];
+% [m,n] = size(r_a);
+% for t=1:m
+%     s = r_a{t,1};
+%     r_a(t,1) = {s(1:end-4)};
+% end
+% r_b(1,:) = [];
+% [m,n] = size(r_b);
+% for t=1:m
+%     s = r_b{t,1};
+%     r_b(t,1) = {s(1:end-4)};
+% end
+% times_a = datetime(r_a(:,1), 'InputFormat', 'yyyy-MM-dd HH:mm:ss') + hours(timezone);
+% times_b = datetime(r_b(:,1), 'InputFormat', 'yyyy-MM-dd HH:mm:ss') + hours(timezone);
 
 % Daylight savings times - uncomment and update if you need
 % daylight savings for March
@@ -60,10 +76,15 @@ times_b = datetime(r_b(:,1), 'InputFormat', 'yyyy-MM-dd HH:mm:ss') + hours(timez
 %     end
 % end
 
-pm_a = i_a(:,9);
-rh = i_a(:,8);
-T = i_a(:,7);
-pm_b = i_b(:,9);
+% below updated by Bob
+% pm_a = i_a(:,9);
+% rh = i_a(:,8);
+% T = i_a(:,7);
+% pm_b = i_b(:,9);
+pm_a = tA.Var6;
+rh = tA.Var11;
+T = tA.Var10;
+pm_b = tB.Var6;
 
 % delete duplicate entries
 to_delete = zeros(length(times_a), 1);
