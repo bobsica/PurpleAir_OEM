@@ -17,7 +17,7 @@ pm_avgs = i(664:1387,4);  % purpleair PM2.5 data
 rh_avgs = i(664:1387,5);  % purpleair RH data
 T_avgs = i(664:1387,6);  % purpleair T data
 
-%%set R, retrieval structure
+%set R, retrieval structure
 R = [];
 R.jq = {};
 R.ji = {};
