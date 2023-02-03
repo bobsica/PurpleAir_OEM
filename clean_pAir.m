@@ -7,7 +7,7 @@ b_primary = './Example/July_B.csv'; % Primary (B) file
 timezone = -4; % compared to UTC
 quality_percent = 0.25; % keep readings where channels agree within 25%
 quality_absolute = 4; % keep readings where channels agree within 4ug/m3
-option = 'hourly'; % 'daily' or 'hourly' averaging
+option = 'daily'; % 'daily' or 'hourly' averaging
 
 % read data
 % r_a, r_b are times
@@ -231,6 +231,13 @@ else
     T_avgs(end+1) = mean(T_daily);
     stds(end+1) = std(pm_daily);
     dayss(end+1) = current_day;
+    [current_year,current_month,current_day] = ymd(times_a(1));
+    dayhr = datetime(current_year,current_month,current_day-1) + dayss;  
+    % bob code for full numeric date
+    % dayss (in unit of days), minus 1 h (in days) to fix time
+    % 2nd is a duration; datetime adds in the base day
+
+    % !!!! check above, looks like 1 extra point at end for daily?
 end
 %[dayss',pm_averages',rh_avgs',T_avgs'] % print the data
 % for daily, dayss+times_a(1)-1 is the date; last value bad?
