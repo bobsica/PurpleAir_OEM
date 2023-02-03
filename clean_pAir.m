@@ -197,6 +197,11 @@ if strcmp(option, 'hourly')
     T_avgs(end+1) = mean(T_hourly);
     hours(end+1) = current_hour + 1;
     dayss(end+1) = current_day;
+    [current_year,current_month,current_day] = ymd(times_a(1));
+    dayhr = datetime(current_year,current_month,current_day-1) + dayss + hours/24 - 1/24.;  
+    % bob code for full numeric date
+    % dayss + hours (in unit of days), minus 1 h (in days) to fix time
+    % 2nd and 3rd terms are a duration; datetime adds in the base day
     
 else
     pm_daily = [];
@@ -228,6 +233,7 @@ else
     dayss(end+1) = current_day;
 end
 %[dayss',pm_averages',rh_avgs',T_avgs'] % print the data
+% for daily, dayss+times_a(1)-1 is the date; last value bad?
 
 round(days(times_a(end)-times_a(1)));
 if round(days(times_a(end)-times_a(1))) > length(pm_averages)
