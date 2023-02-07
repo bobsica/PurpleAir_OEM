@@ -161,6 +161,8 @@ T = T(indices);
 
 % get averages
 pm_averages = [];
+pm_averages = [];
+varpm_avgWT = [];
 rh_avgs = [];
 T_avgs = [];
 [current_year,current_month,current_day] = ymd(times_a(1));
@@ -221,6 +223,8 @@ else
             rh_avgs(end+1) = mean(rh_daily);
             T_avgs(end+1) = mean(T_daily);
             stds(end+1) = std(pm_daily);
+            stds2 = stds.^2;
+%            [pm_averagesW(end+1), varpm_avgWT(end+1)] = weighted(pm_daily,stds2);
             pm_daily = [pm(t)];
             rh_daily = [rh(t)];
             T_daily = [T(t)];
