@@ -3,6 +3,7 @@ tMinT = readtable(Min_file); % reads file
 %tMinC = rows2vars(tMinT);
 
 %needs code to pick range of table based on date.
+% and of course include weighted mean, or at least RMS error
 i = 1;
 tMinH(1) = mean(tMinT.Var2(i));
 tMinH(2) = mean(tMinT.Var3(i));
