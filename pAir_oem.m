@@ -29,12 +29,31 @@ iter = 0;
 O = defOreal;
 
 % ministry SD
-[rows,col] = size(tMinT);
+[rows,col] = size(ii);
 
-you want to loop while ii(2) < 24; each time it rolls over do a new SD
+%you want to loop while ii(2) < 24; each time it rolls over do a new SD
 
-for i = 1:rows
-    tMinH(1) = mean(tMinT.Var2(i));
+for j = 2:rows
+    k = 1;
+    if j == 2
+        minH(1) = pm_avgs(1);
+        k = 2;
+    end %if
+    while ii(j-1) < ii(j)
+        minH(k) = pm_avgs(j);
+        k = k + 1;
+    else
+        minSTD() = std(minH);
+        need this std for all of them in group!
+    end %while
+end
+
+
+
+
+
+
+
     tMinH(2) = mean(tMinT.Var3(i));
     tMinH(3) = mean(tMinT.Var4(i));
     tMinH(4) = mean(tMinT.Var5(i));
