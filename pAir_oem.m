@@ -14,6 +14,7 @@
 % for summer 664:1387
 go = 664; stop = 1387;
 % 2nd index, RHS was 2, 3, 4, 6
+hrs = ii(go:stop,2); % hours
 min_avgs = ii(go:stop,3);  % ministry PM2.5 data
 pm_avgs = ii(go:stop,4);  % purpleair PM2.5 data
 rh_avgs = ii(go:stop,5);  % purpleair RH data
@@ -33,19 +34,21 @@ O = defOreal;
 
 %you want to loop while ii(2) < 24; each time it rolls over do a new SD
 
+pm_std = size(rows);
+minH = size(rows);
 for j = 2:rows
-    k = 1;
-    if j == 2
-        minH(1) = pm_avgs(1);
-        k = 2;
-    end %if
-    while ii(j-1) < ii(j)
-        minH(k) = pm_avgs(j);
-        k = k + 1;
-    else
-        minSTD() = std(minH);
-        need this std for all of them in group!
-    end %while
+     k = 1;
+%     if j == 2
+%         minH(1) = min_avgs(1);
+%     else %if
+        if hrs(j-1) < hrs(j)
+            k = k + 1;
+            minH(k) = min_avgs(j);
+        else %if
+            minSTD = std(minH);
+            pm_std(j-1:j+k) = minSTD;
+        end
+%    end
 end
 
 
@@ -80,7 +83,7 @@ end
     
     tMinT.Var26(i) = mean(tMinH);
     tMinT.Var27(i) = std(tMinH);
-end
+%end
 tMinSD = tMinT.Var27(start:rows);
 % end ministry SD
 
