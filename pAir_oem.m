@@ -18,7 +18,7 @@ hrs = ii(go:stop,2); % hours
 min_avgs = ii(go:stop,3);  % ministry PM2.5 data
 pm_avgs = ii(go:stop,4);  % purpleair PM2.5 data
 rh_avgs = ii(go:stop,5);  % purpleair RH data
-T_avgs = ii(go:stop,6);  % purpleair T data
+T_avgs = ii(go:stop,7);  % purpleair T data; column 6 if F, 7 is Kelvin
 
 %set R, retrieval structure
 R = [];
@@ -29,11 +29,8 @@ iter = 0;
 % O, input structure
 O = defOreal;
 
-% ministry SD
+% ministry SD (Bob)
 [rows,col] = size(ii(go:stop,3));
-
-%you want to loop while ii(2) < 24; each time it rolls over do a new SD
-
 min_std = size(rows);
 numinSD = size(rows);
 minH(1) = min_avgs(1);
@@ -43,22 +40,16 @@ for j = 2:rows
     if j == 519
         kkk = k;
     end
-   if hrs(j-1) < hrs(j)
-      k = k + 1;
-      minH(k) = min_avgs(j);
-   else %if
-       if k < 10
-           j
-           k
-           'I should not be here'
-           pause
-       end
-       numinSD(j-length(minH):j) = k;
-       minSTD = std(minH);
-       min_std(j-length(minH):j) = minSTD;
-       minH = [];
-       k = 0;
-   end
+    if hrs(j-1) < hrs(j)
+        k = k + 1;
+        minH(k) = min_avgs(j);
+    else %if
+        numinSD(j-length(minH):j) = k;
+        minSTD = std(minH);
+        min_std(j-length(minH):j) = minSTD;
+        minH = [];
+        k = 0;
+    end
 end
 % on exit, fix first value, write out last group and transpose vector
 min_std(1) = min_std(2);
@@ -75,7 +66,7 @@ numinSD = numinSD';
 Y.Y = min_avgs;
 % covariance matrix. ministry sensor has 5% accuracy, plus added 0.5 since
 % integer rounding
-% Y.Yvar = (0.5 + 0.05*min_avgs).^2;
+%Y.Yvar = (0.5 + 0.05*min_avgs).^2;
 Y.Yvar = min_std.^2 + (0.05*min_avgs).^2; % Bob modified with min SD above
 
 Se = diag(Y.Yvar);
