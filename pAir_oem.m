@@ -68,15 +68,14 @@ min_std(j-length(minH):j) = minSTD;
 min_std = min_std';
 numinSD = numinSD';
 
-% end Bob code
+% end Bob code (except for using the newly computed SDEV below
 
 % Y, data structure for 'measurement vector'. This is the ministry data
 % because that is an example of output from the forward model
 Y.Y = min_avgs;
 % covariance matrix. ministry sensor has 5% accuracy, plus added 0.5 since
 % integer rounding
-%Y.Yvar = (0.5 + 0.05*min_avgs).^2;
-%Y.Yvar = (0.29).^2 + (0.05*min_avgs).^2;
+% Y.Yvar = (0.5 + 0.05*min_avgs).^2;
 Y.Yvar = min_std.^2 + (0.05*min_avgs).^2; % Bob modified with min SD above
 
 Se = diag(Y.Yvar);
