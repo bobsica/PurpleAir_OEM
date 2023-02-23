@@ -12,7 +12,7 @@
 % get data from excel file
 [ii,t,r] = xlsread('./Example/averaged_data.xlsx','Hourly_summer');
 % for summer 664:1387
-go = 664; stop = 1387;
+go = 664; stop = 1387; %711 (first 2 days); %1167 (update incomplete days in Hourly_summer); %1387;
 % 2nd index, RHS was 2, 3, 4, 6
 hrs = ii(go:stop,2); % hours
 min_avgs = ii(go:stop,3);  % ministry PM2.5 data
@@ -30,62 +30,45 @@ iter = 0;
 O = defOreal;
 
 % ministry SD
-[rows,col] = size(ii);
+[rows,col] = size(ii(go:stop,3));
 
 %you want to loop while ii(2) < 24; each time it rolls over do a new SD
 
-pm_std = size(rows);
-minH = size(rows);
+min_std = size(rows);
+numinSD = size(rows);
+minH(1) = min_avgs(1);
+jj = 0;
+k = 0;
 for j = 2:rows
-     k = 1;
-%     if j == 2
-%         minH(1) = min_avgs(1);
-%     else %if
-        if hrs(j-1) < hrs(j)
-            k = k + 1;
-            minH(k) = min_avgs(j);
-        else %if
-            minSTD = std(minH);
-            pm_std(j-1:j+k) = minSTD;
-        end
-%    end
+    if j == 519
+        kkk = k;
+    end
+   if hrs(j-1) < hrs(j)
+      k = k + 1;
+      minH(k) = min_avgs(j);
+   else %if
+       if k < 10
+           j
+           k
+           'I should not be here'
+           pause
+       end
+       numinSD(j-length(minH):j) = k;
+       minSTD = std(minH);
+       min_std(j-length(minH):j) = minSTD;
+       minH = [];
+       k = 0;
+   end
 end
+% on exit, fix first value, write out last group and transpose vector
+min_std(1) = min_std(2);
+numinSD(j-length(minH):j) = k;
+minSTD = std(minH);
+min_std(j-length(minH):j) = minSTD;
+min_std = min_std';
+numinSD = numinSD';
 
-
-
-
-
-
-
-    tMinH(2) = mean(tMinT.Var3(i));
-    tMinH(3) = mean(tMinT.Var4(i));
-    tMinH(4) = mean(tMinT.Var5(i));
-    tMinH(5) = mean(tMinT.Var6(i));
-    tMinH(6) = mean(tMinT.Var7(i));
-    tMinH(7) = mean(tMinT.Var8(i));
-    tMinH(8) = mean(tMinT.Var9(i));
-    tMinH(9) = mean(tMinT.Var10(i));
-    tMinH(10) = mean(tMinT.Var11(i));
-    tMinH(11) = mean(tMinT.Var12(i));
-    tMinH(12) = mean(tMinT.Var13(i));
-    tMinH(13) = mean(tMinT.Var14(i));
-    tMinH(14) = mean(tMinT.Var15(i));
-    tMinH(15) = mean(tMinT.Var16(i));
-    tMinH(16) = mean(tMinT.Var17(i));
-    tMinH(17) = mean(tMinT.Var18(i));
-    tMinH(18) = mean(tMinT.Var19(i));
-    tMinH(19) = mean(tMinT.Var20(i));
-    tMinH(20) = mean(tMinT.Var21(i));
-    tMinH(21) = mean(tMinT.Var22(i));
-    tMinH(22) = mean(tMinT.Var23(i));
-    tMinH(23) = mean(tMinT.Var24(i));
-    tMinH(24) = mean(tMinT.Var25(i));
-    
-    tMinT.Var26(i) = mean(tMinH);
-    tMinT.Var27(i) = std(tMinH);
-%end
-tMinSD = tMinT.Var27(start:rows);
-% end ministry SD
+% end Bob code
 
 % Y, data structure for 'measurement vector'. This is the ministry data
 % because that is an example of output from the forward model
@@ -94,6 +77,7 @@ Y.Y = min_avgs;
 % integer rounding
 %Y.Yvar = (0.5 + 0.05*min_avgs).^2;
 %Y.Yvar = (0.29).^2 + (0.05*min_avgs).^2;
+Y.Yvar = min_std.^2 + (0.05*min_avgs).^2; % Bob modified with min SD above
 
 Se = diag(Y.Yvar);
 
