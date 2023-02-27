@@ -9,10 +9,18 @@
 % data is PM, RH, T
 % b is known constants
 
+% Jill had for summer 664:1387
+% go = 664; stop = 1387; 
+% test: go = 25; stop = 49;
+
+go = 1; stop = 1696; period = 'Hourly_summer';
+%go = 1; stop = 2207; period = 'Hourly_spring';
+%go = 1; stop = 1754; period = 'Hourly_fall';
+%go = 1; stop = 2120; period = 'Hourly_winter';
+
 % get data from excel file
-[ii,t,r] = xlsread('./Example/averaged_data.xlsx','Hourly_summer');
-% for summer 664:1387
-go = 664; stop = 1387; %711 (first 2 days); %1167 (update incomplete days in Hourly_summer); %1387;
+[ii,t,r] = xlsread('./Example/averaged_data.xlsx',period);
+
 % 2nd index, RHS was 2, 3, 4, 6
 hrs = ii(go:stop,2); % hours
 min_avgs = ii(go:stop,3);  % ministry PM2.5 data
@@ -98,3 +106,5 @@ X.x
 % apply forward model to get corrected purpleair data
 exponent = Q.RH.*exp(-Q.b./(T_avgs*Q.Dp));
 pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*exponent./(1 - exponent));
+
+save(period,'-struct','X')
