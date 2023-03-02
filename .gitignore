@@ -29,3 +29,19 @@ codegen/
 
 # Octave session info
 octave-workspace
+Hourly_fall.mat
+Hourly_spring.mat
+Hourly_summer.mat
+Hourly_winter.mat
+April.mat
+December.mat
+January.mat
+February.mat
+July.mat
+June.mat
+March.mat
+May.mat
+November.mat
+September.mat
+*.mat
+Example/~$averaged_data.xlsx
