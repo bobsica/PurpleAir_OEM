@@ -13,10 +13,29 @@
 % go = 664; stop = 1387; 
 % test: go = 25; stop = 49;
 
-go = 1; stop = 1696; period = 'Hourly_summer';
-%go = 1; stop = 2207; period = 'Hourly_spring';
-%go = 1; stop = 1754; period = 'Hourly_fall';
-%go = 1; stop = 2120; period = 'Hourly_winter';
+%go = 1; stop = 1696; period = 'Hourly_summer'
+%go = 1; stop = 2207; period = 'Hourly_spring'
+%go = 1; stop = 1754; period = 'Hourly_fall'
+%go = 1; stop = 2120; period = 'Hourly_winter'
+
+%go = 730; stop = 1460; period = 'Hourly_winter' % January
+%go = 1461; stop = 2120; period = 'Hourly_winter' % February
+%go = 1; stop = 743; period = 'Hourly_spring' % March
+%go = 744; stop = 1463; period = 'Hourly_spring' % April
+%go = 1464; stop = 2207; period = 'Hourly_spring' % May
+%go = 1; stop = 663; period = 'Hourly_summer' % June; skip point 664, is Nan
+%go = 665; stop = 1388; period = 'Hourly_summer' % July
+
+%go = 665; stop = 1594; period = 'Hourly_summer' % July 1594 is august jump
+%go = 1595; stop = 1696; period = 'Hourly_summer' % July 1594 is august jump
+%go = 1316; stop = 1388; period = 'Hourly_summer' % July 1594 is august jump
+
+
+%go = 1389; stop = 1696; period = 'Hourly_summer' % August %1389 to 1696
+go = 1; stop = 303; period = 'Hourly_fall' % September
+%go = 304; stop = 1043; period = 'Hourly_fall' % October
+%go = 1044; stop = 1754; period = 'Hourly_fall' % November
+%go = 1; stop = 729; period = 'Hourly_winter' % December
 
 % get data from excel file
 [ii,t,r] = xlsread('./Example/averaged_data.xlsx',period);
@@ -45,9 +64,6 @@ minH(1) = min_avgs(1);
 jj = 0;
 k = 0;
 for j = 2:rows
-    if j == 519
-        kkk = k;
-    end
     if hrs(j-1) < hrs(j)
         k = k + 1;
         minH(k) = min_avgs(j);
@@ -94,8 +110,18 @@ Q.Dp = 0.0000002; % particle diameter m
 n = 2; % retrieving i, k
 
 % set a priori coefficients
-x_a = [1.5;0.5];
-x_var = [0.5*x_a(1)^2,0.5*x_a(2)^2]; %was 0.5
+%x_a = [2.5;0.25]; % ; for column vector
+%x_sd = [2.5,0.1*x_a(2)];
+% above 2.5 +/- 2.5 is from Malings et al; HGF from Ceurelly et al.
+
+% below is after re-running set with above
+x_a = [1.9;0.25];
+x_sd = [0.66,0.1*x_a(2)];
+
+%x_var = [0.001*x_a(1)^2,0.5.*x_a(2)^2]; %was 0.5; , for row vector..
+%x_a = [1.5;0.5]; %2.2
+%x_var = [0.76.^2,0.1.^2];
+x_var = x_sd.^2;
 S_a = diag(x_var);
 
 S_ainv = [];
@@ -107,4 +133,40 @@ X.x
 exponent = Q.RH.*exp(-Q.b./(T_avgs*Q.Dp));
 pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*exponent./(1 - exponent));
 
-save(period,'-struct','X')
+% fit check
+%'Uncorrected'
+[slp,sigmaslp,regAvg]=fitline0(pm_avgs,min_avgs);
+%'Corrected'
+[slpc,sigmaslpc,regCorr]=fitline0(pm_corrected,min_avgs);
+X.slp = slp;
+X.sigmaslp = sigmaslp;
+X.regAvg = regAvg;
+X.slpc = slpc;
+X.sigmaslpc = sigmaslpc;
+X.regCorr = regCorr;
+
+%janX = X;
+%save('January.mat','janX')
+%febX = X;
+%save('February.mat','febX')
+%marX = X;
+%save('March.mat','marX')
+%aprX = X;
+%save('April.mat','aprX')
+%mayX = X;
+%save('May.mat','mayX')
+%junX = X;
+%save('June.mat','junX')
+%julX = X;
+%save('July.mat','julX')
+%augX = X;
+%save('August.mat','augX')
+%sepX = X;
+%save('September.mat','sepX')
+%octX = X;
+%save('October.mat','octX')
+%novX = X;
+%save('November.mat','novX')
+%decX = X;
+%save('December.mat','decX')
+
