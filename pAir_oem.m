@@ -13,8 +13,8 @@
 % go = 664; stop = 1387; 
 % test: go = 25; stop = 49;
 
-%go = 1; stop = 1696; period = 'Hourly_summer'
 %go = 1; stop = 2207; period = 'Hourly_spring'
+%go = 1; stop = 1696; period = 'Hourly_summer'
 %go = 1; stop = 1754; period = 'Hourly_fall'
 %go = 1; stop = 2120; period = 'Hourly_winter'
 
@@ -25,17 +25,15 @@
 %go = 1464; stop = 2207; period = 'Hourly_spring' % May
 %go = 1; stop = 663; period = 'Hourly_summer' % June; skip point 664, is Nan
 %go = 665; stop = 1388; period = 'Hourly_summer' % July
+% no august
+%go = 1; stop = 303; period = 'Hourly_fall' % September
+%go = 304; stop = 1043; period = 'Hourly_fall' % October
+%go = 1044; stop = 1754; period = 'Hourly_fall' % November
+go = 1; stop = 729; period = 'Hourly_winter' % December
 
 %go = 665; stop = 1594; period = 'Hourly_summer' % July 1594 is august jump
 %go = 1595; stop = 1696; period = 'Hourly_summer' % July 1594 is august jump
 %go = 1316; stop = 1388; period = 'Hourly_summer' % July 1594 is august jump
-
-
-%go = 1389; stop = 1696; period = 'Hourly_summer' % August %1389 to 1696
-go = 1; stop = 303; period = 'Hourly_fall' % September
-%go = 304; stop = 1043; period = 'Hourly_fall' % October
-%go = 1044; stop = 1754; period = 'Hourly_fall' % November
-%go = 1; stop = 729; period = 'Hourly_winter' % December
 
 % get data from excel file
 [ii,t,r] = xlsread('./Example/averaged_data.xlsx',period);
@@ -144,6 +142,15 @@ X.regAvg = regAvg;
 X.slpc = slpc;
 X.sigmaslpc = sigmaslpc;
 X.regCorr = regCorr;
+
+%springX = X;
+%save('Hourly_spring.mat','springX')
+%summerX = X;
+%save('Hourly_summer.mat','summerX')
+%fallX = X;
+%save('Hourly_fall.mat','fallX')
+%winterX = X;
+%save('Hourly_winter.mat','winterX')
 
 %janX = X;
 %save('January.mat','janX')
