@@ -127,6 +127,16 @@ Seinv = [];
 [X,R] = oem(O,Q,R,@pAirmakeJ_physical,S_a,Se,S_ainv,Seinv,x_a,Y.Y);
 X.x
 
+% RH contribution to HGF error
+expo = Q.RH.*exp(-Q.b./(Q.T*Q.Dp));
+K_RH = (expo./Q.RH) .* (Q.Y-(2+X.x(2))./(1-expo.*(1+X.x(2)).^2));
+%S_RH = (0.05.*Q.RH).^2; % 5% error
+%RHvar = X.G(2,:)*K_RH*S_RH*K_RH'*X.G(2,:)';
+S_RH = (0.5).^2
+RHvar = X.G(2,:)*K_RH*S_RH*K_RH'*X.G(2,:)';
+RHerr = sqrt(RHvar);
+%RHerrMean = sqrt((sum(1./RHvar)).^-1);
+
 % apply forward model to get corrected purpleair data
 exponent = Q.RH.*exp(-Q.b./(T_avgs*Q.Dp));
 pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*exponent./(1 - exponent));
@@ -142,6 +152,7 @@ X.regAvg = regAvg;
 X.slpc = slpc;
 X.sigmaslpc = sigmaslpc;
 X.regCorr = regCorr;
+X.RHerr = RHerr;
 
 %springX = X;
 %save('Hourly_spring.mat','springX')
@@ -174,6 +185,6 @@ X.regCorr = regCorr;
 %save('October.mat','octX')
 %novX = X;
 %save('November.mat','novX')
-%decX = X;
-%save('December.mat','decX')
+decX = X;
+save('December.mat','decX')
 

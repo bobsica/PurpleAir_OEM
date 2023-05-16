@@ -11,10 +11,16 @@ hgfs(2) = summerX.x(2);
 hgfs(3) = fallX.x(2);
 hgfs(4) = winterX.x(2);
 
-ehgfs(1) = springX.e(2);
-ehgfs(2) = summerX.e(2);
-ehgfs(3) = fallX.e(2);
-ehgfs(4) = winterX.e(2);
+ehgfso(1) = springX.eo(2);
+ehgfso(2) = summerX.eo(2);
+ehgfso(3) = fallX.eo(2);
+ehgfso(4) = winterX.eo(2);
+ehgfsRH(1) = springX.RH(2);
+ehgfsRH(2) = summerX.RH(2);
+ehgfsRH(3) = fallX.RH(2);
+ehgfsRH(4) = winterX.RH(2);
+ehgfs = sqrt(ehgfso.^2 + ehgfsRH.^2);
+
 xs = [1 2 3 4];
 'hgfs mean/sd'
 mean(hgfs)
@@ -42,7 +48,10 @@ load February.mat
 load January.mat
 
 hgfm = [janX.x(2) febX.x(2) marX.x(2) aprX.x(2) mayX.x(2) junX.x(2) julX.x(2) nan sepX.x(2) octX.x(2) novX.x(2) decX.x(2)];
-ehgfm = [janX.e(2) febX.e(2) marX.e(2) aprX.e(2) mayX.e(2) junX.e(2) julX.e(2) nan sepX.e(2) octX.e(2) novX.e(2) decX.e(2)];
+ehgfmo = [janX.eo(2) febX.eo(2) marX.eo(2) aprX.eo(2) mayX.eo(2) junX.eo(2) julX.eo(2) nan sepX.eo(2) octX.eo(2) novX.eo(2) decX.eo(2)];
+ehgfmRH = [janX.RHerr febX.RHerr marX.RHerr aprX.RHerr mayX.RHerr junX.RHerr julX.RHerr nan sepX.RHerr octX.RHerr novX.RHerr decX.RHerr];
+ehgfm = sqrt(ehgfmo.^2 + ehgfmRH.^2);
+
 xm = [1:1:12];
 'hgfm mean/sd'
 mean(hgfm(~isnan(hgfm)))
@@ -59,5 +68,7 @@ xticks([1:1:12])
 xticklabels({'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'})
 supersizeme(1.2)
 
-
+decX.eo
+decX.RHerr
+sqrt(decX.eo.^2 + decX.RHerr.^2)
 
