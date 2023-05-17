@@ -48,3 +48,5 @@ Example/~$averaged_data.xlsx
 monthHFG.pdf
 seasonHGF.pdf
 supersizeme.m
+*.eps
+*.pdf

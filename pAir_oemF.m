@@ -1,3 +1,4 @@
+function pAir_oemF(witch)
 % pAir_oem
 % Optimal Estimation Method applied to PurpleAir calibration
 % with a physical model from Malings et al
@@ -14,24 +15,42 @@
 % test: go = 25; stop = 49;
 
 
-
-%go = 1; stop = 2207; period = 'Hourly_spring'
-%go = 1; stop = 1696; period = 'Hourly_summer'
-%go = 1; stop = 1754; period = 'Hourly_fall'
-%go = 1; stop = 2120; period = 'Hourly_winter'
-
-%go = 730; stop = 1460; period = 'Hourly_winter' % January
-%go = 1461; stop = 2120; period = 'Hourly_winter' % February
-%go = 1; stop = 743; period = 'Hourly_spring' % March
-%go = 744; stop = 1463; period = 'Hourly_spring' % April
-%go = 1464; stop = 2207; period = 'Hourly_spring' % May
-%go = 1; stop = 663; period = 'Hourly_summer' % June; skip point 664, is Nan
-%go = 665; stop = 1388; period = 'Hourly_summer' % July
-% no august
-%go = 1; stop = 303; period = 'Hourly_fall' % September
-%go = 304; stop = 1043; period = 'Hourly_fall' % October
-%go = 1044; stop = 1754; period = 'Hourly_fall' % November
-go = 1; stop = 729; period = 'Hourly_winter' % December
+if witch == 13
+    go = 1; stop = 2207; period = 'Hourly_spring';
+elseif witch  == 14
+    go = 1; stop = 1696; period = 'Hourly_summer';
+elseif witch  == 15
+    go = 1; stop = 1754; period = 'Hourly_fall';
+elseif witch  == 16
+    go = 1; stop = 2120; period = 'Hourly_winter';
+elseif witch  == 1
+    go = 730; stop = 1460; period = 'Hourly_winter'; % January
+elseif witch  == 2
+    go = 1461; stop = 2120; period = 'Hourly_winter'; % February
+elseif witch  == 3
+    go = 1; stop = 743; period = 'Hourly_spring'; % March
+elseif witch  == 4
+    go = 744; stop = 1463; period = 'Hourly_spring'; % April
+elseif witch  == 5
+    go = 1464; stop = 2207; period = 'Hourly_spring'; % May
+elseif witch  == 6
+    go = 1; stop = 663; period = 'Hourly_summer'; % June; skip point 664, is Nan
+elseif witch  == 7
+    go = 665; stop = 1388; period = 'Hourly_summer'; % July
+elseif witch  == 8
+    'barf' % no august
+    return
+elseif witch  == 9
+    go = 1; stop = 303; period = 'Hourly_fall'; % September
+elseif witch  == 10
+    go = 304; stop = 1043; period = 'Hourly_fall'; % October
+elseif witch  == 11
+    go = 1044; stop = 1754; period = 'Hourly_fall'; % November
+elseif witch  == 12
+    go = 1; stop = 729; period = 'Hourly_winter'; % December
+else
+    return
+end
 
 %go = 665; stop = 1594; period = 'Hourly_summer' % July 1594 is august jump
 %go = 1595; stop = 1696; period = 'Hourly_summer' % July 1594 is august jump
@@ -127,14 +146,12 @@ S_a = diag(x_var);
 S_ainv = [];
 Seinv = [];
 [X,R] = oem(O,Q,R,@pAirmakeJ_physical,S_a,Se,S_ainv,Seinv,x_a,Y.Y);
-X.x
+%X.x
 
 % RH contribution to HGF error
 expo = Q.RH.*exp(-Q.b./(Q.T*Q.Dp));
 dEdH = -(Q.RH.*Q.b./(Q.Dp.*Q.T.^2)) .* exp(2.*Q.b./Q.T./Q.Dp);
-dycdE = 1;
-K_RH = dEdH .* dycdE;
-%K_RH = (expo./Q.RH) .* (Q.Y-(2+X.x(2))./(1-expo.*(1+X.x(2)).^2));
+K_RH = (expo./Q.RH) .* (Q.Y-(2+X.x(2))./(1-expo.*(1+X.x(2)).^2));
 %S_RH = (0.05.*Q.RH).^2; % 5% error
 %RHvar = X.G(2,:)*K_RH*S_RH*K_RH'*X.G(2,:)';
 S_RH = (0.025).^2;
@@ -159,37 +176,55 @@ X.sigmaslpc = sigmaslpc;
 X.regCorr = regCorr;
 X.RHerr = RHerr;
 
-%springX = X;
-%save('Hourly_spring.mat','springX')
-%summerX = X;
-%save('Hourly_summer.mat','summerX')
-%fallX = X;
-%save('Hourly_fall.mat','fallX')
-%winterX = X;
-%save('Hourly_winter.mat','winterX')
+if witch  == 13
+    springX = X;
+    save('Hourly_spring.mat','springX')
+elseif witch  == 14
+    summerX = X;
+    save('Hourly_summer.mat','summerX')
+elseif witch  == 15
+    fallX = X;
+    save('Hourly_fall.mat','fallX')
+elseif witch  == 16
+    winterX = X;
+    save('Hourly_winter.mat','winterX')
+elseif witch  == 1
+    janX = X;
+    save('January.mat','janX')
+elseif witch  == 2
+    febX = X;
+    save('February.mat','febX')
+elseif witch  == 3
+    marX = X;
+    save('March.mat','marX')
+elseif witch  == 4
+    aprX = X;
+    save('April.mat','aprX')
+elseif witch  == 5
+    mayX = X;
+    save('May.mat','mayX')
+elseif witch  == 6
+    junX = X;
+    save('June.mat','junX')
+elseif witch  == 7
+    julX = X;
+    save('July.mat','julX')
+elseif witch  == 8
+    augX = X;
+    save('August.mat','augX')
+elseif witch  == 9
+    sepX = X;
+    save('September.mat','sepX')
+elseif witch  == 10
+    octX = X;
+    save('October.mat','octX')
+elseif witch  == 11
+    novX = X;
+    save('November.mat','novX')
+elseif witch  == 12
+    decX = X;
+    save('December.mat','decX')
+end
+return
 
-%janX = X;
-%save('January.mat','janX')
-%febX = X;
-%save('February.mat','febX')
-%marX = X;
-%save('March.mat','marX')
-%aprX = X;
-%save('April.mat','aprX')
-%mayX = X;
-%save('May.mat','mayX')
-%junX = X;
-%save('June.mat','junX')
-%julX = X;
-%save('July.mat','julX')
-%augX = X;
-%save('August.mat','augX')
-%sepX = X;
-%save('September.mat','sepX')
-%octX = X;
-%save('October.mat','octX')
-%novX = X;
-%save('November.mat','novX')
-%decX = X;
-%save('December.mat','decX')
 

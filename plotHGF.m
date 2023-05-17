@@ -1,5 +1,5 @@
 % plot HGF
-clear all; close all
+%clear all; close all
 
 load Hourly_spring;
 load Hourly_summer;
@@ -15,25 +15,31 @@ ehgfso(1) = springX.eo(2);
 ehgfso(2) = summerX.eo(2);
 ehgfso(3) = fallX.eo(2);
 ehgfso(4) = winterX.eo(2);
-ehgfsRH(1) = springX.RH(2);
-ehgfsRH(2) = summerX.RH(2);
-ehgfsRH(3) = fallX.RH(2);
-ehgfsRH(4) = winterX.RH(2);
+ehgfsRH(1) = springX.RHerr;
+ehgfsRH(2) = summerX.RHerr;
+ehgfsRH(3) = fallX.RHerr;
+ehgfsRH(4) = winterX.RHerr;
 ehgfs = sqrt(ehgfso.^2 + ehgfsRH.^2);
 
 xs = [1 2 3 4];
-'hgfs mean/sd'
-mean(hgfs)
-std(hgfs)
+%'hgfs mean/sd'
+mms = mean(hgfs);
+sss = std(hgfs);
 
 figure
-errorbar(xs,hgfs,ehgfs,"ro:")
-axis([0.5 4.5 0.38 0.48])
+h = errorbar(xs,hgfs,ehgfso,"ro:");
+hold on
+hh = errorbar(xs,hgfs,ehgfsRH,"bo:");
+axis([0.5 4.5 0.2 0.6])
 xlabel Season
 ylabel 'Hygroscopic Growth Factor'
 xticks([1:1:4])
 xticklabels({'Spring','Summer','Fall','Winter'})
 supersizeme(1.2)
+h.MarkerSize = 12;
+h.MarkerFaceColor = 'red';
+title('2.5% Relative Humidity Uncertainty');
+%hh.MarkerSize = 16;
 
 load December.mat
 load November.mat
@@ -53,22 +59,27 @@ ehgfmRH = [janX.RHerr febX.RHerr marX.RHerr aprX.RHerr mayX.RHerr junX.RHerr jul
 ehgfm = sqrt(ehgfmo.^2 + ehgfmRH.^2);
 
 xm = [1:1:12];
-'hgfm mean/sd'
-mean(hgfm(~isnan(hgfm)))
-std(hgfm(~isnan(hgfm)))
+%'hgfm mean/sd';
+mm = mean(hgfm(~isnan(hgfm)));
+ss = std(hgfm(~isnan(hgfm)));
 %mean(hgfm)
 %std(hgfm)
 
 figure
-h = errorbar(xm,hgfm,ehgfm,"ro:");
-axis([0.5 12.5 0.2 0.55])
+h = errorbar(xm,hgfm,ehgfmo,"ro:");
+hold on
+hh = errorbar(xm,hgfm,ehgfmRH,"bo:");
+axis([0.5 12.5 0.2 0.6])
 xlabel Month
 ylabel 'Hygroscopic Growth Factor'
 xticks([1:1:12])
 xticklabels({'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'})
 supersizeme(1.2)
+h.MarkerSize = 12;
+h.MarkerFaceColor = 'red';
+title('2.5% Relative Humidity Uncertainty');
 
-decX.eo
-decX.RHerr
-sqrt(decX.eo.^2 + decX.RHerr.^2)
+% decX.eo
+% decX.RHerr
+% sqrt(decX.eo.^2 + decX.RHerr.^2)
 
