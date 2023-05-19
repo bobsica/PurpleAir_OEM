@@ -13,7 +13,7 @@
 % go = 664; stop = 1387; 
 % test: go = 25; stop = 49;
 
-
+RHpAirErr = 2.5/100; %assumed error of purple air RH
 
 %go = 1; stop = 2207; period = 'Hourly_spring'
 %go = 1; stop = 1696; period = 'Hourly_summer'
@@ -130,42 +130,20 @@ Seinv = [];
 X.x
 
 % RH contribution to HGF error
-expo = Q.RH.*exp(-Q.b./(Q.T*Q.Dp));
-dEdHv = -(Q.RH.*Q.b./(Q.Dp.*Q.T.^2)) .* exp(2.*Q.b./Q.T./Q.Dp);
-dEdHb = exp(-Q.b./(Q.T*Q.Dp));
-dycdEv = -((Q.Y.*X.x(2)) ./ (1-expo).^2) ./ (1+X.x(2).*expo./(1-expo)).^2;
-dycdEb1 = Q.Y - ((2+X.x(2))./(1-expo.*(1+X.x(2)).^2));
-dycdE1 = 2 - Q.RH.*(1+X.x(2));
-dycdE2 = (1 - Q.RH.*(1+X.x(2))).^2;
-dycdEb2 = Q.Y .* (dycdE1./dycdE2);
-%dycdEb3 = -Q.Y ./ ((1+X.x(2).*(1-Q.RH)) ./ ((1-Q.RH).^2));
-dycdEb3 = (X.x(2).*Q.Y) ./ (1-Q.RH.*(1-X.x(2))).^2;
-
-figure
-plot(-dycdEv,'b')
-hold on
-plot(dycdEb1,'r')
-plot(dycdEb3,'c')
-
-figure
-%
-hold on
-plot(dEdHb,'r')
-%pause
-
-K_RH = dEdHv .* dycdEb3;
-%K_RH = (expo./Q.RH) .* (Q.Y-(2+X.x(2))./(1-expo.*(1+X.x(2)).^2));
-%S_RH = (0.05.*Q.RH).^2; % 5% error
-%RHvar = X.G(2,:)*K_RH*S_RH*K_RH'*X.G(2,:)';
-S_RH = (0.025).^2;
+dEdH = exp(-Q.b./(Q.T*Q.Dp));
+dycdE = (X.x(2).*Q.Y) ./ (1-Q.RH.*(1-X.x(2))).^2;
+K_RH = dEdH .* dycdE;
+'relative humidity error'
+RHpAirErr*100
+S_RH = (RHpAirErr).^2;
 RHvar = X.G(2,:)*K_RH*S_RH*K_RH'*X.G(2,:)';
 RHerr = sqrt(RHvar);
-%RHerrMean = sqrt((sum(1./RHvar)).^-1);
 
 % apply forward model to get corrected purpleair data
-exponent = Q.RH.*exp(-Q.b./(T_avgs*Q.Dp));
+% exponent = Q.RH.*exp(-Q.b./(T_avgs*Q.Dp));
 % T_avgs and Q.T are indentical, so expo = exponent
-pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*exponent./(1 - exponent));
+expo = Q.RH.*exp(-Q.b./(Q.T*Q.Dp));
+pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*expo./(1 - expo));
 
 % fit check
 %'Uncorrected'

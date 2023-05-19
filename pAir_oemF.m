@@ -1,4 +1,4 @@
-function pAir_oemF(witch)
+function pAir_oemF(witch,RHpAirErr)
 % pAir_oem
 % Optimal Estimation Method applied to PurpleAir calibration
 % with a physical model from Malings et al
@@ -149,19 +149,16 @@ Seinv = [];
 %X.x
 
 % RH contribution to HGF error
-expo = Q.RH.*exp(-Q.b./(Q.T*Q.Dp));
-dEdH = -(Q.RH.*Q.b./(Q.Dp.*Q.T.^2)) .* exp(2.*Q.b./Q.T./Q.Dp);
-K_RH = (expo./Q.RH) .* (Q.Y-(2+X.x(2))./(1-expo.*(1+X.x(2)).^2));
-%S_RH = (0.05.*Q.RH).^2; % 5% error
-%RHvar = X.G(2,:)*K_RH*S_RH*K_RH'*X.G(2,:)';
-S_RH = (0.025).^2;
+dEdH = exp(-Q.b./(Q.T*Q.Dp));
+dycdE = (X.x(2).*Q.Y) ./ (1-Q.RH.*(1-X.x(2))).^2;
+K_RH = dEdH .* dycdE;
+S_RH = (RHpAirErr).^2;
 RHvar = X.G(2,:)*K_RH*S_RH*K_RH'*X.G(2,:)';
 RHerr = sqrt(RHvar);
-%RHerrMean = sqrt((sum(1./RHvar)).^-1);
 
 % apply forward model to get corrected purpleair data
-exponent = Q.RH.*exp(-Q.b./(T_avgs*Q.Dp));
-pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*exponent./(1 - exponent));
+expo = Q.RH.*exp(-Q.b./(Q.T*Q.Dp));
+pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*expo./(1 - expo));
 
 % fit check
 %'Uncorrected'

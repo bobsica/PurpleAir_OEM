@@ -1,3 +1,4 @@
+function plotHGF(RHpAirErr)
 % plot HGF
 %clear all; close all
 
@@ -23,8 +24,8 @@ ehgfs = sqrt(ehgfso.^2 + ehgfsRH.^2);
 
 xs = [1 2 3 4];
 %'hgfs mean/sd'
-mms = mean(hgfs);
-sss = std(hgfs);
+mms = mean(hgfs)
+sss = std(hgfs)
 
 figure
 h = errorbar(xs,hgfs,ehgfso,"ro:");
@@ -38,8 +39,13 @@ xticklabels({'Spring','Summer','Fall','Winter'})
 supersizeme(1.2)
 h.MarkerSize = 12;
 h.MarkerFaceColor = 'red';
-title('2.5% Relative Humidity Uncertainty');
-%hh.MarkerSize = 16;
+if RHpAirErr == .025
+    title('2.5% Relative Humidity Uncertainty');
+    saveas(gcf,'season2d5percent.pdf')
+else
+    title('1% Relative Humidity Uncertainty');
+    saveas(gcf,'season1percent.pdf')
+end
 
 load December.mat
 load November.mat
@@ -59,11 +65,9 @@ ehgfmRH = [janX.RHerr febX.RHerr marX.RHerr aprX.RHerr mayX.RHerr junX.RHerr jul
 ehgfm = sqrt(ehgfmo.^2 + ehgfmRH.^2);
 
 xm = [1:1:12];
-%'hgfm mean/sd';
-mm = mean(hgfm(~isnan(hgfm)));
-ss = std(hgfm(~isnan(hgfm)));
-%mean(hgfm)
-%std(hgfm)
+%'hgfm mean/sd'
+mm = mean(hgfm(~isnan(hgfm)))
+ss = std(hgfm(~isnan(hgfm)))
 
 figure
 h = errorbar(xm,hgfm,ehgfmo,"ro:");
@@ -77,7 +81,13 @@ xticklabels({'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','
 supersizeme(1.2)
 h.MarkerSize = 12;
 h.MarkerFaceColor = 'red';
-title('2.5% Relative Humidity Uncertainty');
+if RHpAirErr == .025
+    title('2.5% Relative Humidity Uncertainty');
+    saveas(gcf,'monthly2d5percent.pdf')
+else
+    title('1% Relative Humidity Uncertainty');
+    saveas(gcf,'monthly1percent.pdf')
+end
 
 % decX.eo
 % decX.RHerr
