@@ -157,8 +157,10 @@ RHvar = X.G(2,:)*K_RH*S_RH*K_RH'*X.G(2,:)';
 RHerr = sqrt(RHvar);
 
 % apply forward model to get corrected purpleair data
-expo = Q.RH.*exp(-Q.b./(Q.T*Q.Dp));
+expo = Q.RH .* exp(-Q.b./(Q.T.*Q.Dp));
+expom = mean(Q.RH) .* exp(-Q.b./(mean(Q.T).*Q.Dp));
 pm_corrected = X.x(1) + pm_avgs ./ (1 + X.x(2)*expo./(1 - expo));
+HGF = 1 + X.x(2).*(expom./(1-expom));
 
 % fit check
 %'Uncorrected'
@@ -172,6 +174,7 @@ X.slpc = slpc;
 X.sigmaslpc = sigmaslpc;
 X.regCorr = regCorr;
 X.RHerr = RHerr;
+X.HGF = HGF;
 
 if witch  == 13
     springX = X;

@@ -12,6 +12,11 @@ hgfs(2) = summerX.x(2);
 hgfs(3) = fallX.x(2);
 hgfs(4) = winterX.x(2);
 
+HGFs(1) = springX.HGF;
+HGFs(2) = summerX.HGF;
+HGFs(3) = fallX.HGF;
+HGFs(4) = winterX.HGF;
+
 ehgfso(1) = springX.eo(2);
 ehgfso(2) = summerX.eo(2);
 ehgfso(3) = fallX.eo(2);
@@ -63,6 +68,7 @@ hgfm = [janX.x(2) febX.x(2) marX.x(2) aprX.x(2) mayX.x(2) junX.x(2) julX.x(2) na
 ehgfmo = [janX.eo(2) febX.eo(2) marX.eo(2) aprX.eo(2) mayX.eo(2) junX.eo(2) julX.eo(2) nan sepX.eo(2) octX.eo(2) novX.eo(2) decX.eo(2)];
 ehgfmRH = [janX.RHerr febX.RHerr marX.RHerr aprX.RHerr mayX.RHerr junX.RHerr julX.RHerr nan sepX.RHerr octX.RHerr novX.RHerr decX.RHerr];
 ehgfm = sqrt(ehgfmo.^2 + ehgfmRH.^2);
+HGFm = [janX.HGF febX.HGF marX.HGF aprX.HGF mayX.HGF junX.HGF julX.HGF nan sepX.HGF octX.HGF novX.HGF decX.HGF];
 
 xm = [1:1:12];
 %'hgfm mean/sd'
@@ -92,4 +98,7 @@ end
 % decX.eo
 % decX.RHerr
 % sqrt(decX.eo.^2 + decX.RHerr.^2)
+
+figure
+plot(xm,HGFm)
 
