@@ -48,7 +48,11 @@ elseif witch  == 11
     go = 1044; stop = 1754; period = 'Hourly_fall'; % November
 elseif witch  == 12
     go = 1; stop = 729; period = 'Hourly_winter'; % December
+elseif witch  == 21
+    go = 247; stop = 336; period = 'Daily'; % 336 Winter; subtract one from start/stop
+
 else
+    'no data read'
     return
 end
 
@@ -59,12 +63,62 @@ end
 % get data from excel file
 [ii,t,r] = xlsread('./Example/averaged_data.xlsx',period);
 
+% Y, data structure for 'measurement vector'. This is the ministry data
+% because that is an example of output from the forward model
+% variance calculated below
+
 % 2nd index, RHS was 2, 3, 4, 6
-hrs = ii(go:stop,2); % hours
-min_avgs = ii(go:stop,3);  % ministry PM2.5 data
-pm_avgs = ii(go:stop,4);  % purpleair PM2.5 data
-rh_avgs = ii(go:stop,5);  % purpleair RH data
-T_avgs = ii(go:stop,7);  % purpleair T data; column 6 if F, 7 is Kelvin
+if witch > 20
+%    hrs = ii(go:stop,2); % hours
+    min_avgs = ii(go:stop,2);  % ministry PM2.5 data
+    pm_avgs = ii(go:stop,3);  % purpleair PM2.5 data
+    rh_avgs = ii(go:stop,4);  % purpleair RH data
+    T_avgs = ii(go:stop,6);  % purpleair T data; column 6 if F, 7 is Kelvin
+    min_sd = ii(go:stop,7);
+% covariance matrix. ministry sensor has 5% accuracy, plus added 0.5 since
+% integer rounding
+    Y.Y = min_avgs;
+%    Y.Yvar = (0.5*ones(size(min_avgs))).^2;
+%    Y.Yvar = (0.5 + 0.05*min_avgs).^2;
+    Y.Yvar = (0.5 + min_sd).^2;
+else
+    hrs = ii(go:stop,2); % hours
+    min_avgs = ii(go:stop,3);  % ministry PM2.5 data
+    pm_avgs = ii(go:stop,4);  % purpleair PM2.5 data
+    rh_avgs = ii(go:stop,5);  % purpleair RH data
+    T_avgs = ii(go:stop,7);  % purpleair T data; column 6 if F, 7 is Kelvin
+% ministry SD (Bob)
+    [rows,col] = size(ii(go:stop,3));
+    min_std = size(rows);
+    numinSD = size(rows);
+    minH(1) = min_avgs(1);
+    jj = 0;
+    k = 0;
+    for j = 2:rows
+        if hrs(j-1) < hrs(j)
+            k = k + 1;
+            minH(k) = min_avgs(j);
+        else %if
+            numinSD(j-length(minH):j) = k;
+            minSTD = std(minH);
+            min_std(j-length(minH):j) = minSTD;
+            minH = [];
+            k = 0;
+        end
+    end
+    % on exit, fix first value, write out last group and transpose vector
+    min_std(1) = min_std(2);
+    numinSD(j-length(minH):j) = k;
+    minSTD = std(minH);
+    min_std(j-length(minH):j) = minSTD;
+    min_std = min_std';
+    numinSD = numinSD';
+% end Bob code (except for using the newly computed SDEV below
+    Y.Y = min_avgs;
+    Y.Yvar = min_std.^2 + (0.05*min_avgs).^2; % Bob modified with min SD above
+end %if
+
+Se = diag(Y.Yvar);
 
 %set R, retrieval structure
 R = [];
@@ -74,45 +128,6 @@ iter = 0;
 
 % O, input structure
 O = defOreal;
-
-% ministry SD (Bob)
-[rows,col] = size(ii(go:stop,3));
-min_std = size(rows);
-numinSD = size(rows);
-minH(1) = min_avgs(1);
-jj = 0;
-k = 0;
-for j = 2:rows
-    if hrs(j-1) < hrs(j)
-        k = k + 1;
-        minH(k) = min_avgs(j);
-    else %if
-        numinSD(j-length(minH):j) = k;
-        minSTD = std(minH);
-        min_std(j-length(minH):j) = minSTD;
-        minH = [];
-        k = 0;
-    end
-end
-% on exit, fix first value, write out last group and transpose vector
-min_std(1) = min_std(2);
-numinSD(j-length(minH):j) = k;
-minSTD = std(minH);
-min_std(j-length(minH):j) = minSTD;
-min_std = min_std';
-numinSD = numinSD';
-
-% end Bob code (except for using the newly computed SDEV below
-
-% Y, data structure for 'measurement vector'. This is the ministry data
-% because that is an example of output from the forward model
-Y.Y = min_avgs;
-% covariance matrix. ministry sensor has 5% accuracy, plus added 0.5 since
-% integer rounding
-%Y.Yvar = (0.5 + 0.05*min_avgs).^2;
-Y.Yvar = min_std.^2 + (0.05*min_avgs).^2; % Bob modified with min SD above
-
-Se = diag(Y.Yvar);
 
 % Q, Forward model structure. This is the purpleair pm2.5 and RH data
 % because that is what is used as data in our forward model
@@ -176,6 +191,19 @@ X.regCorr = regCorr;
 X.RHerr = RHerr;
 X.HGF = HGF;
 
+nloop = length(pm_corrected);
+ntest = length(Y.Y);
+if nloop == ntest
+    mae = sum(abs(pm_corrected-Y.Y))./nloop;
+    bias = sum(pm_corrected-Y.Y)./nloop;
+    X.mae = mae;
+    X.bias = bias;
+else
+    'number of pAir samples and ministry not equal'
+    'no data written'
+    return
+end %if
+
 if witch  == 13
     springX = X;
     save('Hourly_spring.mat','springX')
@@ -224,6 +252,10 @@ elseif witch  == 11
 elseif witch  == 12
     decX = X;
     save('December.mat','decX')
+elseif witch  == 21
+    winDX = X;
+    save('winter-daily.mat','winDX')
+
 end
 return
 
