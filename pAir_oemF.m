@@ -1,4 +1,4 @@
-function pAir_oemF(witch,RHpAirErr)
+function pAir_oemF(witch,RHpAirErr,iplt)
 % pAir_oem
 % Optimal Estimation Method applied to PurpleAir calibration
 % with a physical model from Malings et al
@@ -179,9 +179,11 @@ HGF = 1 + X.x(2).*(expom./(1-expom));
 
 % fit check
 %'Uncorrected'
-[slp,sigmaslp,regAvg]=fitline0(pm_avgs,min_avgs);
+%[slp,sigmaslp,regAvg]=fitline0(pm_avgs,min_avgs);
+[slp,sigmaslp,regAvg]=fitline0(min_avgs,pm_avgs);
 %'Corrected'
-[slpc,sigmaslpc,regCorr]=fitline0(pm_corrected,min_avgs);
+%[slpc,sigmaslpc,regCorr]=fitline0(pm_corrected,min_avgs);
+[slpc,sigmaslpc,regCorr]=fitline0(min_avgs,pm_corrected);
 X.slp = slp;
 X.sigmaslp = sigmaslp;
 X.regAvg = regAvg;
@@ -191,17 +193,42 @@ X.regCorr = regCorr;
 X.RHerr = RHerr;
 X.HGF = HGF;
 
+% regression method
+parms = [pm_avgs,rh_avgs];
+mdl = fitlm(parms,min_avgs);
+coeffs = table2array(mdl.Coefficients(1:3,1));
+statFit = coeffs(3).*pm_avgs + coeffs(2).*pm_avgs + coeffs(1);
+X.coeffs = coeffs;
+
 nloop = length(pm_corrected);
 ntest = length(Y.Y);
 if nloop == ntest
     mae = sum(abs(pm_corrected-Y.Y))./nloop;
+    maeStat = sum(abs(statFit-Y.Y))./nloop;
     bias = sum(pm_corrected-Y.Y)./nloop;
+    biasStat = sum(statFit-Y.Y)./nloop;
+    rms = rmse(pm_corrected,Y.Y);
+    rmsStat = rmse(statFit,Y.Y);
     X.mae = mae;
     X.bias = bias;
+    X.biasStat = biasStat;
+    X.rms = rms;
+    X.rmsStat = rmsStat;
 else
     'number of pAir samples and ministry not equal'
     'no data written'
     return
+end %if
+
+if iplt == 1
+    figure
+    plot(min_avgs,pm_avgs,'ms')
+    hold on
+    plot(min_avgs,pm_corrected,'ro')
+    plot(min_avgs,statFit,'bx')
+    plot([0 60],[0 60],'k')
+    xlabel(['Ministry PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
+    ylabel(['Purple Air PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
 end %if
 
 if witch  == 13
@@ -254,7 +281,8 @@ elseif witch  == 12
     save('December.mat','decX')
 elseif witch  == 21
     winDX = X;
-    save('winter-daily.mat','winDX')
+    save('daily-winter.mat','winDX')
+    savefig('daily-winter.fig')
 
 end
 return
