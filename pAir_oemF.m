@@ -50,7 +50,12 @@ elseif witch  == 12
     go = 1; stop = 729; period = 'Hourly_winter'; % December
 elseif witch  == 21
     go = 247; stop = 336; period = 'Daily'; % 336 Winter; subtract one from start/stop
-
+elseif witch  == 22
+    go = 1; stop = 92; period = 'Daily'; %spring
+elseif witch  == 23
+    go = 93; stop = 171; period = 'Daily'; %summer
+elseif witch  == 24
+    go = 172; stop = 246; period = 'Daily'; %fall
 else
     'no data read'
     return
@@ -116,6 +121,31 @@ else
 % end Bob code (except for using the newly computed SDEV below
     Y.Y = min_avgs;
     Y.Yvar = min_std.^2 + (0.05*min_avgs).^2; % Bob modified with min SD above
+end %if 
+
+% code for missing June/July averages
+if witch == 6 || witch == 7
+check = diff(ii(go:stop,2));
+buff(1) = ii(go,4);
+mm = 0;
+nn = 2;
+kk = 0;
+for jj = go+1:stop
+    kk = kk + 1;
+    if check(kk) > 0 
+        buff(nn) = ii(jj,4);
+        nn = nn + 1;
+    else
+        mm = mm + 1;
+        pav(mm) = mean(buff);
+        pavsd(mm) = std(buff);
+        buff = zeros(size(buff(nn-1)));
+        nn = 1;
+    end %if
+end
+mm = mm + 1;
+pav(mm) = mean(buff);
+pavsd(mm) = std(buff);
 end %if
 
 Se = diag(Y.Yvar);
@@ -261,9 +291,11 @@ elseif witch  == 5
 elseif witch  == 6
     junX = X;
     save('June.mat','junX')
+    save('pAVGjune.mat','pav','pavsd')
 elseif witch  == 7
     julX = X;
     save('July.mat','julX')
+    save('pAVGjuly.mat','pav','pavsd')
 elseif witch  == 8
     augX = X;
     save('August.mat','augX')
@@ -283,7 +315,18 @@ elseif witch  == 21
     winDX = X;
     save('daily-winter.mat','winDX')
     savefig('daily-winter.fig')
-
+elseif witch  == 22
+    sprDX = X;
+    save('daily-spring.mat','sprDX')
+    savefig('daily-spring.fig')
+elseif witch  == 23
+    sumDX = X;
+    save('daily-summer.mat','sumDX')
+    savefig('daily-summer.fig')
+elseif witch  == 24
+    fallDX = X;
+    save('daily-fall.mat','fallDX')
+    savefig('daily-fall.fig')
 end
 return
 
