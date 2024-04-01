@@ -51,3 +51,9 @@ supersizeme.m
 *.eps
 *.pdf
 daily-winter.fig
+daily-fall.fig
+daily-spring.fig
+daily_plt.m
+pJulyDaily.csv
+pJulyDaily.txt
+pJunDaily.txt
