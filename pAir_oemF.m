@@ -66,7 +66,9 @@ end
 %go = 1316; stop = 1388; period = 'Hourly_summer' % July 1594 is august jump
 
 % get data from excel file
-[ii,t,r] = xlsread('./Example/averaged_data.xlsx',period);
+% averaged_date"2" means the new sheet with June and July daily averages
+[ii,t,r] = xlsread('./Example/averaged_data2.xlsx',period);
+%[ii,t,r] = xlsread('./Example/averaged_data.xlsx',period);
 
 % Y, data structure for 'measurement vector'. This is the ministry data
 % because that is an example of output from the forward model
@@ -224,10 +226,13 @@ X.RHerr = RHerr;
 X.HGF = HGF;
 
 % regression method
-parms = [pm_avgs,rh_avgs];
-mdl = fitlm(parms,min_avgs);
+%parms = [pm_avgs,rh_avgs];
+parms = [min_avgs,rh_avgs];
+%mdl = fitlm(parms,min_avgs);
+mdl = fitlm(parms,pm_avgs);
 coeffs = table2array(mdl.Coefficients(1:3,1));
-statFit = coeffs(3).*pm_avgs + coeffs(2).*pm_avgs + coeffs(1);
+statFit = coeffs(2).*pm_avgs + coeffs(3).*rh_avgs;
+%statFit2 = coeffs(3).*pm_avgs + coeffs(2).*rh_avgs + coeffs(1); 
 X.coeffs = coeffs;
 
 nloop = length(pm_corrected);
@@ -240,6 +245,7 @@ if nloop == ntest
     rms = rmse(pm_corrected,Y.Y);
     rmsStat = rmse(statFit,Y.Y);
     X.mae = mae;
+    X.maeStat = maeStat;
     X.bias = bias;
     X.biasStat = biasStat;
     X.rms = rms;
