@@ -226,12 +226,10 @@ X.RHerr = RHerr;
 X.HGF = HGF;
 
 % regression method
+% this is finally correct as of 2 Apr 2024
 parms = [pm_avgs,rh_avgs];
-%parms = [min_avgs,rh_avgs];
 mdl = fitlm(parms,min_avgs);
-%mdl = fitlm(parms,pm_avgs);
 coeffs = table2array(mdl.Coefficients(1:3,1));
-%statFit = coeffs(2).*min_avgs + coeffs(3).*rh_avgs + coeffs(1);
 statFit = coeffs(2).*pm_avgs + coeffs(3).*rh_avgs + coeffs(1); 
 X.coeffs = coeffs;
 X.mdl = mdl;
