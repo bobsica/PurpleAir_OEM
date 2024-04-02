@@ -49,13 +49,13 @@ elseif witch  == 11
 elseif witch  == 12
     go = 1; stop = 729; period = 'Hourly_winter'; % December
 elseif witch  == 21
-    go = 247; stop = 336; period = 'Daily'; % 336 Winter; subtract one from start/stop
+    go = 247; stop = 336; period = 'Daily'; titl = 'Daily Winter'; % 336 Winter; subtract one from start/stop
 elseif witch  == 22
-    go = 1; stop = 92; period = 'Daily'; %spring
+    go = 1; stop = 92; period = 'Daily'; titl = 'Daily Spring'; %spring
 elseif witch  == 23
-    go = 93; stop = 171; period = 'Daily'; %summer
+    go = 93; stop = 171; period = 'Daily'; titl = 'Daily Summer'; %summer
 elseif witch  == 24
-    go = 172; stop = 246; period = 'Daily'; %fall
+    go = 172; stop = 246; period = 'Daily'; titl = 'Daily Autumn'; %fall
 else
     'no data read'
     return
@@ -226,14 +226,21 @@ X.RHerr = RHerr;
 X.HGF = HGF;
 
 % regression method
-%parms = [pm_avgs,rh_avgs];
-parms = [min_avgs,rh_avgs];
-%mdl = fitlm(parms,min_avgs);
-mdl = fitlm(parms,pm_avgs);
+parms = [pm_avgs,rh_avgs];
+%parms = [min_avgs,rh_avgs];
+mdl = fitlm(parms,min_avgs);
+%mdl = fitlm(parms,pm_avgs);
 coeffs = table2array(mdl.Coefficients(1:3,1));
-statFit = coeffs(2).*pm_avgs + coeffs(3).*rh_avgs;
-%statFit2 = coeffs(3).*pm_avgs + coeffs(2).*rh_avgs + coeffs(1); 
+%statFit = coeffs(2).*min_avgs + coeffs(3).*rh_avgs + coeffs(1);
+statFit = coeffs(2).*pm_avgs + coeffs(3).*rh_avgs + coeffs(1); 
 X.coeffs = coeffs;
+X.mdl = mdl;
+gcf = figure;
+hh = plotAdjustedResponse(mdl,'x1');
+hhh = hh(1);
+xFit = hhh.XData;
+yFit = hhh.YData;
+close(gcf)
 
 nloop = length(pm_corrected);
 ntest = length(Y.Y);
@@ -260,11 +267,16 @@ if iplt == 1
     figure
     plot(min_avgs,pm_avgs,'ms')
     hold on
-    plot(min_avgs,pm_corrected,'ro')
+    plot(min_avgs,pm_corrected,'go')
     plot(min_avgs,statFit,'bx')
-    plot([0 60],[0 60],'k')
+    pmax = max(pm_avgs);
+    pmax = ceil(pmax/10)*10; % round up to near 5; use 10 for 10
+    plot([0 pmax],[0 pmax],'k')
+    axis([0 pmax 0 pmax])
     xlabel(['Ministry PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
     ylabel(['Purple Air PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
+    legend('Raw pAir','OEM pAir','MLR pAir');
+    title(titl)
 end %if
 
 if witch  == 13
