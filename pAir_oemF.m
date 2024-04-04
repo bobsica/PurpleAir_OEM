@@ -275,6 +275,18 @@ if iplt == 1
     ylabel(['Purple Air PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
     legend('Raw pAir','OEM pAir','MLR pAir');
     title(titl)
+% plots coded by RH
+    plttab = table(min_avgs,pm_avgs,rh_avgs);
+    figure
+    scat = scatter(plttab,'min_avgs','pm_avgs','filled','ColorVariable','rh_avgs');
+    scat.SizeData = 80; % size of dots NOT RH scaling
+    ccc = colorbar;
+    ccc.Label.Interpreter = 'latex'; %keeps all fonts the same
+    ccc.Label.String = 'Relative Humidity (\%)';
+    colormap(jet)
+    xlabel(['Ministry PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
+    ylabel(['Purple Air PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
+    'colorbar figures NOT yet save!'
 end %if
 
 if witch  == 13
