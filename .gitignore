@@ -29,33 +29,14 @@ codegen/
 
 # Octave session info
 octave-workspace
-Hourly_fall.mat
-Hourly_spring.mat
-Hourly_summer.mat
-Hourly_winter.mat
-April.mat
-December.mat
-January.mat
-February.mat
-July.mat
-June.mat
-March.mat
-May.mat
-November.mat
-September.mat
+*.fig
 *.mat
-Example/~$averaged_data.xlsx
-monthHFG.pdf
-seasonHGF.pdf
+Example/~$averaged_data.xls
 supersizeme.m
 *.eps
 *.pdf
-daily-winter.fig
-daily-fall.fig
-daily-spring.fig
-daily_plt.m
 pJulyDaily.csv
 pJulyDaily.txt
 pJunDaily.txt
-daily-summer.fig
 
+Example/~$averaged_data.xlsx

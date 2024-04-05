@@ -16,38 +16,38 @@ function pAir_oemF(witch,RHpAirErr,iplt)
 
 
 if witch == 13
-    go = 1; stop = 2207; period = 'Hourly_spring';
+    go = 1; stop = 2207; period = 'Hourly_spring'; titl = 'Spring Hourly';
 elseif witch  == 14
-    go = 1; stop = 1696; period = 'Hourly_summer';
+    go = 1; stop = 1696; period = 'Hourly_summer'; titl = 'Summer Hourly';
 elseif witch  == 15
-    go = 1; stop = 1754; period = 'Hourly_fall';
+    go = 1; stop = 1754; period = 'Hourly_fall'; titl = 'Autumn Hourly';
 elseif witch  == 16
-    go = 1; stop = 2120; period = 'Hourly_winter';
+    go = 1; stop = 2120; period = 'Hourly_winter'; titl = 'Winter Hourly';
 elseif witch  == 1
-    go = 730; stop = 1460; period = 'Hourly_winter'; % January
+    go = 730; stop = 1460; period = 'Hourly_winter'; titl = 'January Hourly';% January
 elseif witch  == 2
-    go = 1461; stop = 2120; period = 'Hourly_winter'; % February
+    go = 1461; stop = 2120; period = 'Hourly_winter'; titl = 'February Hourly';% February
 elseif witch  == 3
-    go = 1; stop = 743; period = 'Hourly_spring'; % March
+    go = 1; stop = 743; period = 'Hourly_spring'; titl = 'March Hourly'; %March
 elseif witch  == 4
-    go = 744; stop = 1463; period = 'Hourly_spring'; % April
+    go = 744; stop = 1463; period = 'Hourly_spring'; titl = 'April Hourly'; %April
 elseif witch  == 5
-    go = 1464; stop = 2207; period = 'Hourly_spring'; % May
+    go = 1464; stop = 2207; period = 'Hourly_spring'; titl = 'May Hourly';% May
 elseif witch  == 6
-    go = 1; stop = 663; period = 'Hourly_summer'; % June; skip point 664, is Nan
+    go = 1; stop = 663; period = 'Hourly_summer'; titl = 'June Hourly';% June; skip point 664, is Nan
 elseif witch  == 7
-    go = 665; stop = 1388; period = 'Hourly_summer'; % July
+    go = 665; stop = 1388; period = 'Hourly_summer'; titl = 'July Hourly';% July
 elseif witch  == 8
     'barf' % no august
     return
 elseif witch  == 9
-    go = 1; stop = 303; period = 'Hourly_fall'; % September
+    go = 1; stop = 303; period = 'Hourly_fall'; titl = 'September Hourly';% September
 elseif witch  == 10
-    go = 304; stop = 1043; period = 'Hourly_fall'; % October
+    go = 304; stop = 1043; period = 'Hourly_fall'; titl = 'October Hourly';% October
 elseif witch  == 11
-    go = 1044; stop = 1754; period = 'Hourly_fall'; % November
+    go = 1044; stop = 1754; period = 'Hourly_fall'; titl = 'November Hourly';% November
 elseif witch  == 12
-    go = 1; stop = 729; period = 'Hourly_winter'; % December
+    go = 1; stop = 729; period = 'Hourly_winter'; titl = 'December Hourly';% December
 elseif witch  == 21
     go = 247; stop = 336; period = 'Daily'; titl = 'Daily Winter'; % 336 Winter; subtract one from start/stop
 elseif witch  == 22
@@ -233,12 +233,13 @@ coeffs = table2array(mdl.Coefficients(1:3,1));
 statFit = coeffs(2).*pm_avgs + coeffs(3).*rh_avgs + coeffs(1); 
 X.coeffs = coeffs;
 X.mdl = mdl;
-gcf = figure;
-hh = plotAdjustedResponse(mdl,'x1');
-hhh = hh(1);
-xFit = hhh.XData;
-yFit = hhh.YData;
-close(gcf)
+% figure;
+% hh = plotAdjustedResponse(mdl,'x1'); % adjusted fit of model using only
+% pm_avgs (x1), not RH (x2)
+% hhh = hh(1);
+% xFit = hhh.XData;
+% yFit = hhh.YData;
+%close(gcf)
 
 nloop = length(pm_corrected);
 ntest = length(Y.Y);
@@ -262,10 +263,11 @@ else
 end %if
 
 if iplt == 1
-    figure
-    plot(min_avgs,pm_avgs,'ms')
+    grayColor = [.7 .7 .7];
+    H1 = figure;
+    plot(min_avgs,pm_avgs,'LineStyle','none','Marker','x','Color',grayColor);
     hold on
-    plot(min_avgs,pm_corrected,'go')
+    plot(min_avgs,pm_corrected,'ro')
     plot(min_avgs,statFit,'bx')
     pmax = max(pm_avgs);
     pmax = ceil(pmax/10)*10; % round up to near 5; use 10 for 10
@@ -275,86 +277,130 @@ if iplt == 1
     ylabel(['Purple Air PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
     legend('Raw pAir','OEM pAir','MLR pAir');
     title(titl)
+    set(gca,'Box','on');
 % plots coded by RH
-    plttab = table(min_avgs,pm_avgs,rh_avgs);
-    figure
-    scat = scatter(plttab,'min_avgs','pm_avgs','filled','ColorVariable','rh_avgs');
-    scat.SizeData = 80; % size of dots NOT RH scaling
+    plttab = table(min_avgs,pm_avgs,pm_corrected,rh_avgs);
+    H2 = figure;
+    scat = scatter(plttab,'min_avgs','pm_corrected','filled','ColorVariable','rh_avgs');
+    scat.SizeData = 50; % size of dots NOT RH scaling
+    hold on
+%    plot(min_avgs,pm_avgs,'x','Color',grayColor)
+    pmax = max(pm_avgs);
+    pmax = ceil(pmax/10)*10; % round up to near 5; use 10 for 10
+    plot([0 pmax],[0 pmax],'k')
+    axis([0 pmax 0 pmax])
     ccc = colorbar;
     ccc.Label.Interpreter = 'latex'; %keeps all fonts the same
     ccc.Label.String = 'Relative Humidity (\%)';
     colormap(jet)
     xlabel(['Ministry PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
     ylabel(['Purple Air PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
-    'colorbar figures NOT yet save!'
+    title(titl)
+    set(gca,'Box','on');
 end %if
 
 if witch  == 13
     springX = X;
     save('Hourly_spring.mat','springX')
+    savefig(H1,'hourly-spring.fig')
+    savefig(H2,'hourly-spring-RH.fig')
 elseif witch  == 14
     summerX = X;
     save('Hourly_summer.mat','summerX')
+    savefig(H1,'hourly-summer.fig')
+    savefig(H2,'hourly-summer-RH.fig')
 elseif witch  == 15
     fallX = X;
     save('Hourly_fall.mat','fallX')
+    savefig(H1,'hourly-fall.fig')
+    savefig(H2,'hourly-fall-RH.fig')
 elseif witch  == 16
     winterX = X;
     save('Hourly_winter.mat','winterX')
+    savefig(H1,'hourly-winter.fig')
+    savefig(H2,'hourly-winter-RH.fig')
 elseif witch  == 1
     janX = X;
     save('January.mat','janX')
+    savefig(H1,'January.fig')
+    savefig(H2,'January-RH.fig')
 elseif witch  == 2
     febX = X;
     save('February.mat','febX')
+    savefig(H1,'February.fig')
+    savefig(H2,'February-RH.fig')
 elseif witch  == 3
     marX = X;
     save('March.mat','marX')
+    savefig(H1,'March.fig')
+    savefig(H2,'March-RH.fig')
 elseif witch  == 4
     aprX = X;
     save('April.mat','aprX')
+    savefig(H1,'April.fig')
+    savefig(H2,'April-RH.fig')
 elseif witch  == 5
     mayX = X;
     save('May.mat','mayX')
+    savefig(H1,'May.fig')
+    savefig(H2,'May-RH.fig')
 elseif witch  == 6
     junX = X;
     save('June.mat','junX')
     save('pAVGjune.mat','pav','pavsd')
+    savefig(H1,'June.fig')
+    savefig(H2,'June-RH.fig')
 elseif witch  == 7
     julX = X;
     save('July.mat','julX')
     save('pAVGjuly.mat','pav','pavsd')
+    savefig(H1,'July.fig')
+    savefig(H2,'July-RH.fig')
 elseif witch  == 8
     augX = X;
     save('August.mat','augX')
+    savefig(H1,'August.fig')
+    savefig(H2,'August-RH.fig')
 elseif witch  == 9
     sepX = X;
     save('September.mat','sepX')
+    savefig(H1,'September.fig')
+    savefig(H2,'September-RH.fig')
 elseif witch  == 10
     octX = X;
     save('October.mat','octX')
+    savefig(H1,'October.fig')
+    savefig(H2,'October-RH.fig')
 elseif witch  == 11
     novX = X;
     save('November.mat','novX')
+    savefig(H1,'November.fig')
+    savefig(H2,'November-RH.fig')
 elseif witch  == 12
     decX = X;
     save('December.mat','decX')
+    savefig(H1,'December.fig')
+    savefig(H2,'December-RH.fig')
 elseif witch  == 21
     winDX = X;
     save('daily-winter.mat','winDX')
-    savefig('daily-winter.fig')
+    savefig(H1,'daily-winter.fig')
+    savefig(H2,'daily-winter-RH.fig')
 elseif witch  == 22
     sprDX = X;
     save('daily-spring.mat','sprDX')
-    savefig('daily-spring.fig')
+    savefig(H1,'daily-spring.fig')
+    savefig(H2,'daily-spring-RH.fig')
 elseif witch  == 23
     sumDX = X;
     save('daily-summer.mat','sumDX')
-    savefig('daily-summer.fig')
+    savefig(H1,'daily-summer.fig')
+    savefig(H2,'daily-summer-RH.fig')
 elseif witch  == 24
     fallDX = X;
     save('daily-fall.mat','fallDX')
-    savefig('daily-fall.fig')
+    savefig(H1,'daily-fall.fig')
+    savefig(H2,'daily-fall-RH.fig')
 end
 return
 
