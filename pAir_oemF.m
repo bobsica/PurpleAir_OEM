@@ -263,7 +263,7 @@ else
 end %if
 
 if iplt == 1
-    grayColor = [.7 .7 .7];
+    grayColor = [.4 .4 .4]; % larger number ligher gray
     H1 = figure;
     plot(min_avgs,pm_avgs,'LineStyle','none','Marker','x','Color',grayColor);
     hold on
@@ -285,7 +285,7 @@ if iplt == 1
     scat.SizeData = 50; % size of dots NOT RH scaling
     hold on
 %    plot(min_avgs,pm_avgs,'x','Color',grayColor)
-    pmax = max(pm_avgs);
+    pmax = max(pm_corrected); % max(pm_avgs)
     pmax = ceil(pmax/10)*10; % round up to near 5; use 10 for 10
     plot([0 pmax],[0 pmax],'k')
     axis([0 pmax 0 pmax])
