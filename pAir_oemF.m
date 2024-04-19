@@ -271,6 +271,8 @@ if iplt == 1
     plot(min_avgs,statFit,'bx')
     pmax = max(pm_avgs);
     pmax = ceil(pmax/10)*10; % round up to near 5; use 10 for 10
+%    'daily plot scaling is'
+    pmax = 60;
     plot([0 pmax],[0 pmax],'k')
     axis([0 pmax 0 pmax])
     xlabel(['Ministry PM2.5 ','$(\mu g/m^3)$'],'interpreter','latex')
@@ -287,6 +289,8 @@ if iplt == 1
 %    plot(min_avgs,pm_avgs,'x','Color',grayColor)
     pmax = max(pm_corrected); % max(pm_avgs)
     pmax = ceil(pmax/10)*10; % round up to near 5; use 10 for 10
+%    'hourly plot scaling is'
+    pmax = 45;
     plot([0 pmax],[0 pmax],'k')
     axis([0 pmax 0 pmax])
     ccc = colorbar;

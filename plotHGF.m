@@ -35,10 +35,10 @@ sss = std(hgfs)
 figure
 h = errorbar(xs,hgfs,ehgfso,"ro:");
 hold on
-hh = errorbar(xs,hgfs,ehgfsRH,"bo:");
+%hh = errorbar(xs,hgfs,ehgfsRH,"bo:");
 axis([0.5 4.5 0.2 0.6])
 xlabel Season
-ylabel 'Hygroscopic Growth Factor'
+ylabel 'Hygroscopicity of Bulk Aerosol'
 xticks([1:1:4])
 xticklabels({'Spring','Summer','Fall','Winter'})
 supersizeme(1.2)
@@ -69,6 +69,7 @@ ehgfmo = [janX.eo(2) febX.eo(2) marX.eo(2) aprX.eo(2) mayX.eo(2) junX.eo(2) julX
 ehgfmRH = [janX.RHerr febX.RHerr marX.RHerr aprX.RHerr mayX.RHerr junX.RHerr julX.RHerr nan sepX.RHerr octX.RHerr novX.RHerr decX.RHerr];
 ehgfm = sqrt(ehgfmo.^2 + ehgfmRH.^2);
 HGFm = [janX.HGF febX.HGF marX.HGF aprX.HGF mayX.HGF junX.HGF julX.HGF nan sepX.HGF octX.HGF novX.HGF decX.HGF];
+eHGFm = ehgfmo;
 
 xm = [1:1:12];
 %'hgfm mean/sd'
@@ -78,8 +79,32 @@ ss = std(hgfm(~isnan(hgfm)))
 figure
 h = errorbar(xm,hgfm,ehgfmo,"ro:");
 hold on
-hh = errorbar(xm,hgfm,ehgfmRH,"bo:");
+% hh = errorbar(xm,hgfm,ehgfmRH,"bo:");
 axis([0.5 12.5 0.2 0.6])
+xlabel Month
+ylabel 'Hygroscopicity of Bulk Aerosol'
+xticks([1:1:12])
+xticklabels({'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'})
+supersizeme(1.2)
+h.MarkerSize = 12;
+h.MarkerFaceColor = 'red';
+if RHpAirErr == .025
+    title('2.5% Relative Humidity Uncertainty');
+    saveas(gcf,'monthlyBulk2d5percent.pdf')
+else
+    title('1% Relative Humidity Uncertainty');
+    saveas(gcf,'monthlyBulk1percent.pdf')
+end
+
+% decX.eo
+% decX.RHerr
+% sqrt(decX.eo.^2 + decX.RHerr.^2)
+
+figure
+h = errorbar(xm,HGFm,eHGFm,"ro:");
+hold on
+%hh = errorbar(xm,HGFm,ehgfmRH,"bo:");
+axis([0.5 12.5 0 4])
 xlabel Month
 ylabel 'Hygroscopic Growth Factor'
 xticks([1:1:12])
@@ -89,16 +114,8 @@ h.MarkerSize = 12;
 h.MarkerFaceColor = 'red';
 if RHpAirErr == .025
     title('2.5% Relative Humidity Uncertainty');
-    saveas(gcf,'monthly2d5percent.pdf')
+    saveas(gcf,'monthlyHGF2d5percent.pdf')
 else
     title('1% Relative Humidity Uncertainty');
-    saveas(gcf,'monthly1percent.pdf')
+    saveas(gcf,'monthlyHGF1percent.pdf')
 end
-
-% decX.eo
-% decX.RHerr
-% sqrt(decX.eo.^2 + decX.RHerr.^2)
-
-figure
-plot(xm,HGFm)
-
